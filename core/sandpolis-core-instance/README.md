@@ -1,4 +1,4 @@
 ## Sandpolis Instance Module
 
 _This library module is a part of
-[Sandpolis](https://github.com/sandpolis/sandpolis)._
+[Sandpolis](https://github.com/nativeit-dev/sandpolis)._

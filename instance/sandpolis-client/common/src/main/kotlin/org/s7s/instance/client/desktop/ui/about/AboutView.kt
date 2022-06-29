@@ -106,7 +106,7 @@ class AboutView : View("About") {
                         action {
                             UI.getApplication()
                                 .getHostServices()
-                                .showDocument("https://github.com/sandpolis/sandpolis")
+                                .showDocument("https://github.com/nativeit-dev/sandpolis")
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 ## Sandpolis Device Plugin
 
 _This plugin module is a part of
-[Sandpolis](https://github.com/sandpolis/sandpolis)._
+[Sandpolis](https://github.com/nativeit-dev/sandpolis)._
 
 The device plugin integrates with various non-Sandpolis devices on the network.
 These devices (called subagents) do not run an agent instance, instead

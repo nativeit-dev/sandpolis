@@ -1,7 +1,7 @@
 ## Sandpolis Graphical UI Client
 
 _This instance module is a part of
-[Sandpolis](https://github.com/sandpolis/sandpolis)._
+[Sandpolis](https://github.com/nativeit-dev/sandpolis)._
 
 #### Docker on Linux
 
