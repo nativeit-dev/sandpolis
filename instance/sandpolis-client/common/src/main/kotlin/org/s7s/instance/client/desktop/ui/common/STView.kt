@@ -6,6 +6,7 @@
 //  version 2. You may not use this file except in compliance with the MPLv2. //
 //                                                                            //
 //============================================================================//
+
 package org.s7s.instance.client.desktop.ui.common
 
 import org.s7s.core.instance.state.st.STDocument
