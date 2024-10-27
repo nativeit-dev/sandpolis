@@ -1,0 +1,89 @@
+steps:
+  - name: build
+    when:
+      event: push
+      branch: build
+    image: ubuntu:latest
+    environment:
+      GIT_EMAIL:
+        from_secret: GIT_EMAIL
+      VERSION_BUILD: v0.0.0 #This is generally set automatically using the commit SHA
+      RELEASE_TAG: v0.0.0 #This is generally set automatically using the commit SHA
+      GIT_TOKEN:
+        from_secret: GIT_TOKEN
+      GITEA_TOKEN:
+        from_secret: GITEA_TOKEN
+      GIT_SSH_PUSH:
+        from_secret: GIT_SSH_PUSH
+      DEVSPACE: /dev  # Working dir
+      CYAN: '\033[0;36m'
+      CYAN_BOLD: '\033[1;36m'
+      GREEN_BOLD: '\033[1;32m'
+      NC: '\033[0m' # No Color
+      RED: '\033[1;31m'
+      YELLOW: '\033[1;33m'
+    commands:
+      - echo "\033[0;36m INFO | Exporting variables...\033[0m"
+      - export CYAN="$${CYAN}"
+      - export CYAN_BOLD="$${CYAN_BOLD}"
+      - export NC="$${NC}"
+      - export RED="$${RED}"
+      - export YELLOW="$${YELLOW}"
+      - export CI_COMMIT_SHA="$CI_COMMIT_SHA"
+      - export RELEASE_TAG="${CI_COMMIT_SHA^^}"
+      - echo "$${RED}RELEASE_TAG $${CYAN}is set to $${YELLOW}$RELEASE_TAG$${NC}."
+      - echo $RELEASE_TAG >> version.txt
+      - cat version.txt
+      - head -c 8 version.txt
+      - RELEASE_VER="$(head -c 8 version.txt)"
+      - export RELEASE_VER=$RELEASE_VER
+      - echo "$${RED}RELEASE_VER $${CYAN}is set to $${YELLOW}$${RELEASE_VER}$${NC}."
+      - export VERSION_BUILD=v0.0.3-$RELEASE_VER
+      - echo "$${RED}VERSION_BUILD $${CYAN}is set to $${YELLOW}$${VERSION_BUILD}$${NC}."
+      - export RELEASE_BRANCH=$VERSION_BUILD
+      - echo "$${RED}RELEASE_BRANCH $${CYAN}is set to $${YELLOW}$${RELEASE_BRANCH}$${NC}."
+      - export DEVSPACE=$${DEVSPACE}
+      - export GIT_EMAIL=$${GIT_EMAIL}
+      - export GIT_TOKEN=$${GIT_TOKEN}
+      - export GITEA_EMAIL=$${GIT_EMAIL}
+      - export GITEA_TOKEN=$${GITEA_TOKEN}
+      - export GIT_SSH_PUSH=$${GIT_SSH_PUSH}
+      - export GIT_TOKEN=$${GIT_TOKEN}
+      - echo "$CYAN_BOLD |-------------------------------------|$NC"
+      - echo "$CYAN_BOLD INFO $NC|$CYAN Setting up git..$${NC}."
+      - echo "$CYAN_BOLD |-------------------------------------|$NC"
+      - echo "$RED DEBUG$NC |$CYAN The commit SHA is $YELLOW $CI_COMMIT_SHA$${NC}."
+      - echo "$RED DEBUG$NC |$CYAN The build version is $YELLOW $VERSION_BUILD$${NC}."
+      - echo "$RED DEBUG$NC |$CYAN The Gitea email is set to $YELLOW $GITEA_EMAIL$${NC}."
+      - echo "$CYAN_BOLD |-------------------------------------|$NC"
+      - echo "$CYAN_BOLD INFO $NC|$CYAN Setting up git..$${NC}."
+      - git config --global user.email $${GIT_EMAIL}
+      - git config --global user.name "Native IT"
+      - echo "$CYAN_BOLD INFO $NC|$CYAN Setting up required packages...$${NC}."
+      - sudo apt-get install -y libwayland-dev libasound2-dev libudev-dev
+      - echo "$CYAN_BOLD INFO $NC|$CYAN Initializing workspace...$${NC}."
+      - git clone --recursive https://github.com/nativeit-dev/sandpolis ${DEVSPACE}/sandpolis
+      - cd ${DEVSPACE}/sandpolis
+      - echo "$CYAN_BOLD INFO $NC|$CYAN Copying build to CI workspace..$${NC}."
+      - cp -R build $CI_WORKSPACE/sandpolis-$VERSION_BUILD
+      - cd $CI_WORKSPACE
+      - echo "$${GREEN}FINISHED $${NC} |$${CYAN} 'No sweat. Built $${YELLOW}sandpolis-$${VERSION_BUILD} $${CYAN}successfully! Now let's $${RED}push $${CYAN}this thing.'$NC"
+      # - echo "$CYAN_BOLD INFO $NC|$CYAN Setting up SSH..$${NC}."
+      - echo "$CYAN_BOLD INFO $NC|$CYAN Setting up SSH..$${NC}."
+      - mkdir ~/.ssh
+      - echo "$GIT_SSH_PUSH" > ~/.ssh/id_rsa
+      - echo "$GIT_SSH_PUSH" > ~/.ssh/id_rsa
+      - echo "HOST *" > ~/.ssh/config
+      - echo "StrictHostKeyChecking no" >> ~/.ssh/config
+      - echo "$CYAN_BOLD INFO $NC|$CYAN Switching to new git branch $YELLOW $RELEASE_BRANCH$${NC}."
+      - echo "$CYAN_BOLD INFO $NC|$CYAN Switching to new git branch $YELLOW $RELEASE_BRANCH$${NC}."
+      # - git switch -c sandpolis-v$VERSION_BUILD
+      - git checkout -B $RELEASE_BRANCH
+      # # - git merge sandpolis-build
+      - echo "$RED |-------------------------------------|$NC"
+      - ls -hal
+      - echo "$RED |-------------------------------------|$NC"
+      - git add $CI_WORKSPACE/sandpolis-$VERSION_BUILD
+      - git status
+      - echo "$CYAN_BOLD INFO $NC|$CYAN Pushing repository to remote(s)$${NC}."
+      - git push --set-upstream https://$GIT_TOKEN@github.com/nativeit-dev/sandpolis.git $RELEASE_BRANCH
