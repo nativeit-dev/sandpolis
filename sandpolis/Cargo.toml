@@ -15,7 +15,7 @@ built = { version = "0.7", features = ["cargo-lock", "dependency-tree", "git2", 
 anyhow = "1.0.76"
 clap = { version = "4.4.7", features = ["derive", "string"] }
 couch_rs = { version = "0.10.1", default-features = false, features = ["couch_rs_derive", "derive", "rustls-tls"] }
-futures = "0.3.30"
+futures = "0.3.31"
 os_info = "3.8.2"
 rand = "0.8.5"
 reqwest = { version = "0.12.5", default-features = false, features = ["stream", "cookies", "json", "rustls-tls", "charset"] }
